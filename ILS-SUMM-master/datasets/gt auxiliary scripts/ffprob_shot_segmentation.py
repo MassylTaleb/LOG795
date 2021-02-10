@@ -53,9 +53,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
                 final_C.append(length_of_each_part)
             final_C.append( C_without_short_shots[i] - (devide_factor - 1)*length_of_each_part )
 
-    with open('final_C.npy', 'w') as f:
-        for item in final_C:
-            f.write("%s\n" % item)
+    np.save("final_C.npy", final_C)
     return final_C
 
 
