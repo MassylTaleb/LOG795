@@ -56,13 +56,20 @@ def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
     keys = range(len(all_start_time_clips))
 
     x = 1
+    real_clip_duration = 0
+    diff_time = 0
     for i in keys:
-        clip_duration = int(all_end_time_clips[i] - all_start_time_clips[i])
+        real_clip_duration = all_end_time_clips[i] - all_start_time_clips[i]
+        clip_duration = int(real_clip_duration)
+        diff_time += real_clip_duration - clip_duration
+        if diff_time >= 1:
+            clip_duration += 1
+            diff_time -= 1
         dict[x] = all_start_time_clips[i]
-        for j in range(clip_duration):
+        for j in range(clip_duration - 1):
             time = j + 1
             dict[x + time] = all_start_time_clips[i] + time
-        x = x + clip_duration + 1
+        x = x + clip_duration
     if chosen_shots_clips == []:
         print("The length of the shortest shots exceeds the allotted summarization time")
     else:

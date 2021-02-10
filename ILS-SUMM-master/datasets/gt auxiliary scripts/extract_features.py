@@ -30,4 +30,4 @@ def stringSplitByNumbers(x):
     return [int(y) if y.isdigit() else y for y in l]
 
 if __name__ == "__main__":
-    extract_features(os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "data"))
+    extract_features(os.path.join(os.path.dirname(os.getcwd()), "images"))
