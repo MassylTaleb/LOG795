@@ -3,6 +3,7 @@ import cv2
 import glob
 import os
 import re
+
 def extract_features(image_dir_name):
     images = [cv2.imread(file) for file in sorted(glob.glob(os.path.join(image_dir_name, "*.jpg")), key=stringSplitByNumbers)]
     BINS_NUMBER_PER_CHANNEL = 32
@@ -30,4 +31,7 @@ def stringSplitByNumbers(x):
     return [int(y) if y.isdigit() else y for y in l]
 
 if __name__ == "__main__":
-    extract_features(os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "data"))
+    print(os.path.dirname(os.path.dirname(os.getcwd())))
+    print(os.path.dirname(os.path.abspath(__file__)))
+    print('ok')
+    extract_features(os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "images"))

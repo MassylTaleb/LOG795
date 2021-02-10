@@ -71,4 +71,5 @@ def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
         summ_clip.write_videofile(os.path.join('data', "video_summary.mp4"))
 
 if __name__ == "__main__":
+    video_path
     demo()
