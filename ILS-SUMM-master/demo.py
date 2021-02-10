@@ -5,14 +5,17 @@ from ILS_SUMM import ILS_SUMM
 import matplotlib.pyplot as plt
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
+def demo(video_name='Peppa.mp4', summ_ratio=0.1):
     SUMM_RATIO = 0.1  # The maximum allowed ratio between the summary video and the full video.
-    VIDEO_NAME = 'Cosmos_Laundromat.mp4'
+    VIDEO_NAME = 'Cosmus_Laundromat.mp4'
 
     # Load data:
-    X = np.load(os.path.join('data', 'shots_features.npy'))  # Load n x d feature matrix. n -> number of shots, d -> feature dimension.
-    C = np.load(os.path.join('data', 'shots_durations.npy'))  # Load n x 1 shots duration array (number of frames per shot).
+    C = np.load(os.path.join('datasets/gt auxiliary scripts', 'final_C.npy'))
+    X = np.load(os.path.join('datasets/gt auxiliary scripts', 'feature_vector.npy'))
+    #X = np.load(os.path.join('data', 'shots_features.npy'))  # Load n x d feature matrix. n -> number of shots, d -> feature dimension.
+    #C = np.load(os.path.join('data', 'shots_durations.npy'))  # Load n x 1 shots duration array (number of frames per shot).
     shot_sum = C.sum()
+    cum_sum = np.cumsum(C[:-1])
 
     # Calculate allowed budget
     budget = float(summ_ratio) * np.sum(C)
@@ -34,7 +37,7 @@ def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
     plt.savefig(os.path.join('data', 'Solution_Visualization'))
 
     # Generate the video summary file
-    video_file_path = os.path.join('data', video_name)
+    video_file_path = os.path.join('datasets/gt auxiliary scripts', video_name)
     video_clip = VideoFileClip(video_file_path)
     shotIdx = np.concatenate(([0], np.cumsum(C[:-1])))
     frames_per_seconds = np.sum(C)/ video_clip.duration

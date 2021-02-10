@@ -11,7 +11,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
         video_path_in_linux_style = '/'
         full_video_path = '/'.join([video_path_in_linux_style, video_name])
         ouput_file = '/'.join([video_path_in_linux_style, 'shot_segmentation.txt'])
-        command = 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.4)" > ' + shot_seg_text_file
+        command = 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         proc.communicate()
         print("Finished ffmpeg shot segmentation")

@@ -35,8 +35,9 @@ def stringSplitByNumbers(x):
 def get_frames_shot():
     C = np.load("final_C.npy",allow_pickle=False)
     frame_sep = np.sum(C)
-    video_clip = VideoFileClip("Peppa.mp4")
-    cap = cv2.VideoCapture("Peppa.mp4")
+    path = "Peppa.mp4"
+    video_clip = VideoFileClip(path)
+    cap = cv2.VideoCapture(path)
     fps = np.sum(C) / video_clip.duration
     feature_vector = []
     selected_frame = 0
@@ -45,6 +46,7 @@ def get_frames_shot():
         cap.set(1, selected_frame)
         ret, frame = cap.read()
         feature_vector.append(extract_features(frame))
+    np.save("feature_vector.npy", feature_vector)
     return feature_vector
 if __name__ == "__main__":
     #extract_features(os.path.join(os.path.dirname(os.getcwd()), "images"))
