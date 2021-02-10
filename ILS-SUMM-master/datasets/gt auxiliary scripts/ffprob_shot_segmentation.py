@@ -11,7 +11,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
         video_path_in_linux_style = '/'
         full_video_path = '/'.join([video_path_in_linux_style, video_name])
         ouput_file = '/'.join([video_path_in_linux_style, 'shot_segmentation.txt'])
-        command = 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + full_video_path + ',select=gt(scene\,.4)" > ' + ouput_file
+        command = 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.4)" > ' + shot_seg_text_file
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         proc.communicate()
         print("Finished ffmpeg shot segmentation")
@@ -19,7 +19,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
     with open(shot_seg_text_file) as f:
         content = f.readlines()
     shotIdx = [0]
-    frames_per_second = getFramerate(os.path.video_name)
+    frames_per_second = 24
     i = 0
     for line in content:
         shotIdx.append(np.int(np.round(float(line.split(sep="pkt_pts_time=")[1].split(sep="|pkt_dts")[0]) * frames_per_second)))
@@ -27,7 +27,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
     # Impose a minimum (Lmin) and maximum (Lmax) shot length:
     Lmin = 25
     Lmax = 200
-    cap = cv2.VideoCapture(os.pathvideo_name)
+    cap = cv2.VideoCapture(video_name)
     total_num_of_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     C = np.subtract(np.append(shotIdx[1:], total_num_of_frames), shotIdx)
     # Consolidate a short shot with the following shot:
@@ -53,7 +53,7 @@ def ffprob_shot_segmentation( video_name='Peppa.mp4'):
                 final_C.append(length_of_each_part)
             final_C.append( C_without_short_shots[i] - (devide_factor - 1)*length_of_each_part )
 
-    with open('final_C.txt', 'w') as f:
+    with open('final_C.npy', 'w') as f:
         for item in final_C:
             f.write("%s\n" % item)
     return final_C

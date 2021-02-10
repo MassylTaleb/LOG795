@@ -3,6 +3,10 @@ import cv2
 import glob
 import os
 import re
+
+from moviepy.video.io.VideoFileClip import VideoFileClip
+
+
 def extract_features(image_dir_name):
     images = [cv2.imread(file) for file in sorted(glob.glob(os.path.join(image_dir_name, "*.jpg")), key=stringSplitByNumbers)]
     BINS_NUMBER_PER_CHANNEL = 32
@@ -29,5 +33,9 @@ def stringSplitByNumbers(x):
     l = r.split(x)
     return [int(y) if y.isdigit() else y for y in l]
 
+def get_frames_shot():
+    video_clip = VideoFileClip("Peppa.mp4")
+    cap = cv2.VideoCapture("Peppa.mp4")
+    video_lenght = video_clip.duration
 if __name__ == "__main__":
     extract_features(os.path.join(os.path.dirname(os.getcwd()), "images"))
