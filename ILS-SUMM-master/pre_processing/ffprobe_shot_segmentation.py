@@ -6,15 +6,10 @@ import numpy as np
 
 
 def ffprobe_shot_segmentation(video_name):
-    shot_seg_text_file = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "ILS-SUMM-master", "data", "shot_segmentation.txt")
+    shot_seg_text_file = os.path.join(os.getcwd(), "data", "shot_segmentation.txt")
     if not os.path.isfile(shot_seg_text_file):
         print("Ffmpeg shot segmentation in action...")
-
-        # video_path_in_linux_style = '/'
-        # full_video_path = '/'.join([video_path_in_linux_style, video_name])
-        # ouput_file = '/'.join([video_path_in_linux_style, 'shot_segmentation.txt'])
-
-        command = 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
+        command = 'cd ./data && ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         proc.communicate()
         print("Finished ffmpeg shot segmentation")
@@ -58,8 +53,18 @@ def ffprobe_shot_segmentation(video_name):
             for j in range(devide_factor - 1):
                 final_c.append(length_of_each_part)
             final_c.append(c_without_short_shots[i] - (devide_factor - 1)*length_of_each_part)
+    final_c.pop()
+    # final_c_plus = 0
+    #
+    # print(final_c)
+    # for frame_value in final_c:
+    #     if frame_value >= 0:
+    #         final_c_plus += frame_value
+    #     else:
 
-    np.save("../datasets/gt_auxiliary_scripts/final_C.npy", final_c)
+
+    final_c_path = os.path.join(os.getcwd(), "datasets", "gt_auxiliary_scripts", "final_C.npy")
+    np.save(final_c_path, final_c)
     return final_c
 
 
@@ -128,6 +133,4 @@ def extract_boundaries_from_ffprobe_output(output):
 
 
 if __name__ == "__main__":
-    # path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd()))) + "\\data\\Peppa.mp4"
-    # extract_shots_with_ffprobe("Peppa.mp4", 0.3)
     ffprobe_shot_segmentation('../data/video_to_summarize.mp4')

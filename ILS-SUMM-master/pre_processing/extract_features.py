@@ -1,3 +1,4 @@
+import os
 import re
 
 import cv2
@@ -6,9 +7,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 
 
 def extract_features(image):
-    # images = [cv2.imread(file) for file in sorted(glob.glob(os.path.join(image_dir_name, "*.jpg")), key=stringSplitByNumbers)]
     BINS_NUMBER_PER_CHANNEL = 32
-    # features = np.zeros((images.__len__(), BINS_NUMBER_PER_CHANNEL * 3), dtype=float)
     features = np.zeros((BINS_NUMBER_PER_CHANNEL * 3), dtype=float)
 
     r_values = image[:, :, 0].flatten()
@@ -33,7 +32,8 @@ def string_split_by_numbers(x):
 
 
 def get_frames_shot(path):
-    c = np.load("../datasets/gt_auxiliary_scripts/final_C.npy", allow_pickle=False)
+    shot_segmentation_path = os.path.join(os.getcwd(), "datasets", "gt_auxiliary_scripts", "final_C.npy")
+    c = np.load(shot_segmentation_path, allow_pickle=False)
     frame_sep = np.sum(c)
     video_clip = VideoFileClip(path)
     cap = cv2.VideoCapture(path)
@@ -45,10 +45,10 @@ def get_frames_shot(path):
         cap.set(1, selected_frame)
         ret, frame = cap.read()
         feature_vector.append(extract_features(frame))
-    np.save("feature_vector.npy", feature_vector)
+    feature_vector_path = os.path.join(os.getcwd(), "pre_processing", "feature_vector.npy")
+    np.save(feature_vector_path, feature_vector)
     return feature_vector
 
 
 if __name__ == "__main__":
-    # extract_features(os.path.join(os.path.dirname(os.getcwd()), "images"))
     get_frames_shot('../data/video_to_summarize.mp4')

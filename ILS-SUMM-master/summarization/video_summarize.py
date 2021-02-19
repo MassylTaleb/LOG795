@@ -4,17 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-# from ILS_SUMM import ILS_SUMM
-
 from .ILS_SUMM import ILS_SUMM
 
-def demo(video_name, summ_ratio=0.1):
+
+def video_summarize(video_path, summ_ratio=0.1):
     SUMM_RATIO = 0.1  # The maximum allowed ratio between the summary video and the full video.
     VIDEO_NAME = 'Cosmus_Laundromat.mp4'
 
     # Load data:
-    C = np.load(os.path.join('../datasets/gt_auxiliary_scripts', 'final_C.npy'))
-    X = np.load(os.path.join('../pre_processing', 'feature_vector.npy'))
+    C = np.load(os.path.join(os.getcwd(), 'datasets', 'gt_auxiliary_scripts', 'final_C.npy'))
+    X = np.load(os.path.join(os.getcwd(), 'pre_processing', 'feature_vector.npy'))
     shot_sum = C.sum()
     cum_sum = np.cumsum(C[:-1])
 
@@ -35,13 +34,13 @@ def demo(video_name, summ_ratio=0.1):
     plt.scatter(u[representative_points, 1], u[representative_points, 2], s=point_size[representative_points],
                 c='blue', marker='o')
     plt.title('Solution Visualization (total distance = ' + str(total_distance) + ')')
-    plt.savefig(os.path.join('../data', 'Solution_Visualization'))
+    plt.savefig(os.path.join(os.getcwd(), 'data', 'Solution_Visualization'))
 
     # Generate the video summary file
-    video_file_path = os.path.join('../data', video_name)
+    video_file_path = os.path.join(video_path)
     video_clip = VideoFileClip(video_file_path)
     shotIdx = np.concatenate(([0], np.cumsum(C[:-1])))
-    frames_per_seconds = np.sum(C)/ video_clip.duration
+    frames_per_seconds = np.sum(C) / video_clip.duration
     chosen_shots_clips = []
     all_start_time_clips = []
     all_end_time_clips = []
@@ -78,8 +77,8 @@ def demo(video_name, summ_ratio=0.1):
         print("The length of the shortest shots exceeds the allotted summarization time")
     else:
         summ_clip = concatenate_videoclips(chosen_shots_clips)
-        summ_clip.write_videofile(os.path.join('../data', "video_summary.mp4"))
+        summ_clip.write_videofile(os.path.join(os.getcwd(), "data", "video_summary.mp4"))
 
 
 if __name__ == "__main__":
-    demo('../data/video_to_summarize.mp4')
+    video_summarize('../data/video_to_summarize.mp4')
