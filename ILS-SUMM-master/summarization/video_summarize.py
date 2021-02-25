@@ -7,10 +7,7 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips
 from .ILS_SUMM import ILS_SUMM
 
 
-def video_summarize(video_path, summ_ratio=0.1):
-    SUMM_RATIO = 0.1  # The maximum allowed ratio between the summary video and the full video.
-    VIDEO_NAME = 'Cosmus_Laundromat.mp4'
-
+def video_summarize(video_path, summ_ratio):
     # Load data:
     C = np.load(os.path.join(os.getcwd(), 'datasets', 'gt_auxiliary_scripts', 'final_C.npy'))
     X = np.load(os.path.join(os.getcwd(), 'pre_processing', 'feature_vector.npy'))
