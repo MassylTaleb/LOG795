@@ -7,12 +7,16 @@ import numpy as np
 
 def ffprobe_shot_segmentation(video_name):
     shot_seg_text_file = os.path.join(os.getcwd(), "data", "shot_segmentation.txt")
-    if not os.path.isfile(shot_seg_text_file):
-        print("Ffmpeg shot segmentation in action...")
-        command = 'cd ./data && ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        proc.communicate()
-        print("Finished ffmpeg shot segmentation")
+
+    print("Ffmpeg shot segmentation in action...")
+    if os.path.exists(shot_seg_text_file):
+        os.remove(shot_seg_text_file)
+
+    command = 'cd ./data && ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    proc.communicate()
+    print("Finished ffmpeg shot segmentation")
+
     print("Reading shot seg text file")
     with open(shot_seg_text_file) as f:
         content = f.readlines()
