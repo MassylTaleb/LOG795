@@ -26,8 +26,9 @@ def ffprobe_shot_segmentation(video_name):
     # Impose a minimum (Lmin) and maximum (Lmax) shot length:
     l_min = 25
     l_max = 200
-    cap = cv2.VideoCapture(video_name)
+    cap = cv2.VideoCapture(os.path.join(os.getcwd(), "data", video_name))
     total_num_of_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    cap.release()
     c = np.subtract(np.append(shot_idx[1:], total_num_of_frames), shot_idx)
 
     # Consolidate a short shot with the following shot:
@@ -53,14 +54,6 @@ def ffprobe_shot_segmentation(video_name):
             for j in range(devide_factor - 1):
                 final_c.append(length_of_each_part)
             final_c.append(c_without_short_shots[i] - (devide_factor - 1)*length_of_each_part)
-    final_c.pop()
-    # final_c_plus = 0
-    #
-    # print(final_c)
-    # for frame_value in final_c:
-    #     if frame_value >= 0:
-    #         final_c_plus += frame_value
-    #     else:
 
 
     final_c_path = os.path.join(os.getcwd(), "datasets", "gt_auxiliary_scripts", "final_C.npy")
