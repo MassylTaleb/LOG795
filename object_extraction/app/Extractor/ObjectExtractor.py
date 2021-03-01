@@ -36,3 +36,12 @@ class ObjectExtractor:
             image_number += 1
 
         return ROI
+
+
+if __name__ == '__main__':
+    image_path = '/home/ziz/school/LOG795/object_extraction/pomme.jpg'
+    image = cv2.imread(image_path)
+    objects = ObjectExtractor().extract(image)
+    print('Ok')
+    main()
+    
