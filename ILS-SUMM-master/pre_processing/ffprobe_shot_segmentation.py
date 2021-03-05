@@ -5,14 +5,14 @@ import cv2
 import numpy as np
 
 
-def ffprobe_shot_segmentation(video_name):
-    shot_seg_text_file = os.path.join(os.getcwd(), "data", "shot_segmentation.txt")
+def ffprobe_shot_segmentation(video_folder, video_name):
+    shot_seg_text_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "shot_segmentation.txt")
 
     print("Ffmpeg shot segmentation in action...")
     if os.path.exists(shot_seg_text_file):
         os.remove(shot_seg_text_file)
 
-    command = 'cd ./data && ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
+    command = 'cd '+video_folder+' && ffprobe -show_frames -of compact=p=0 -f lavfi "movie=' + video_name + ',select=gt(scene\,.2)" > ' + shot_seg_text_file
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     proc.communicate()
     print("Finished ffmpeg shot segmentation")
@@ -30,7 +30,7 @@ def ffprobe_shot_segmentation(video_name):
     # Impose a minimum (Lmin) and maximum (Lmax) shot length:
     l_min = 25
     l_max = 200
-    cap = cv2.VideoCapture(os.path.join(os.getcwd(), "data", video_name))
+    cap = cv2.VideoCapture(os.path.join(video_folder, video_name))
     total_num_of_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     cap.release()
     c = np.subtract(np.append(shot_idx[1:], total_num_of_frames), shot_idx)
@@ -60,7 +60,7 @@ def ffprobe_shot_segmentation(video_name):
             final_c.append(c_without_short_shots[i] - (devide_factor - 1)*length_of_each_part)
 
 
-    final_c_path = os.path.join(os.getcwd(), "datasets", "gt_auxiliary_scripts", "final_C.npy")
+    final_c_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datasets", "gt_auxiliary_scripts", "final_C.npy")
     np.save(final_c_path, final_c)
     return final_c
 

@@ -32,7 +32,7 @@ def string_split_by_numbers(x):
 
 
 def get_frames_shot(path):
-    shot_segmentation_path = os.path.join(os.getcwd(), "datasets", "gt_auxiliary_scripts", "final_C.npy")
+    shot_segmentation_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datasets", "gt_auxiliary_scripts", "final_C.npy")
     c = np.load(shot_segmentation_path, allow_pickle=False)
     frame_sep = np.sum(c)
     video_clip = VideoFileClip(path)
@@ -45,7 +45,7 @@ def get_frames_shot(path):
         cap.set(1, selected_frame)
         ret, frame = cap.read()
         feature_vector.append(extract_features(frame))
-    feature_vector_path = os.path.join(os.getcwd(), "pre_processing", "feature_vector.npy")
+    feature_vector_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "feature_vector.npy")
     np.save(feature_vector_path, feature_vector)
     return feature_vector
 

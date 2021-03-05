@@ -7,10 +7,10 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips
 from .ILS_SUMM import ILS_SUMM
 
 
-def video_summarize(video_path, summ_ratio):
+def video_summarize(folder_to_save_in, video_path, summ_ratio, title):
     # Load data:
-    C = np.load(os.path.join(os.getcwd(), 'datasets', 'gt_auxiliary_scripts', 'final_C.npy'))
-    X = np.load(os.path.join(os.getcwd(), 'pre_processing', 'feature_vector.npy'))
+    C = np.load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets', 'gt_auxiliary_scripts', 'final_C.npy'))
+    X = np.load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'pre_processing', 'feature_vector.npy'))
     shot_sum = C.sum()
     cum_sum = np.cumsum(C[:-1])
 
@@ -31,7 +31,7 @@ def video_summarize(video_path, summ_ratio):
     plt.scatter(u[representative_points, 1], u[representative_points, 2], s=point_size[representative_points],
                 c='blue', marker='o')
     plt.title('Solution Visualization (total distance = ' + str(total_distance) + ')')
-    plt.savefig(os.path.join(os.getcwd(), 'data', 'Solution_Visualization'))
+    plt.savefig(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'Solution_Visualization'))
 
     # Generate the video summary file
     video_file_path = os.path.join(video_path)
@@ -74,7 +74,9 @@ def video_summarize(video_path, summ_ratio):
         print("The length of the shortest shots exceeds the allotted summarization time")
     else:
         summ_clip = concatenate_videoclips(chosen_shots_clips)
-        summ_clip.write_videofile(os.path.join(os.getcwd(), "data", "video_summary.mp4"))
+        summ_clip.write_videofile(os.path.join(folder_to_save_in, title))
+
+    return dict;
 
 
 if __name__ == "__main__":

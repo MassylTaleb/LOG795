@@ -2,11 +2,18 @@ import sys
 import os
 
 
-def load_video(link_video, path):
-    if os.path.exists(path):
-        os.remove(path)
-    os.system('cd ./data && youtube-dl -f "best[ext=mp4]/best" '
-              '-o "video_to_summarize.mp4" "{}"'.format(link_video))
+def load_video(link_video, video_folder, path, titre):
+        # if not os.path.exists(video_path):
+        #     ydl_opts = {
+        #     'outtmpl' : video_path,
+        #     'format': 'best[ext=mp4]/best'
+        #     }
+        #     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        #         ydl.download([url])
+    if not os.path.exists(path):
+        # os.remove(path)
+        os.system('cd '+video_folder+' && youtube-dl -f "best[ext=mp4]/best" '
+              '-o "{}.mp4" "{}"'.format(titre,link_video))
 
 
 if __name__ == '__main__':
