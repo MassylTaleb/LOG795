@@ -30,14 +30,16 @@ import summarization
 if __name__ == '__main__':
     # if len(sys.argv) == 3:
 
-    videos_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/videos/')
+    videos_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'videos')
     if not os.path.exists(videos_folder):os.makedirs(videos_folder)
 
-    videos_sum_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/videos_summary/')
-    if not os.path.exists(videos_folder):os.makedirs(videos_sum_folder)
+    videos_sum_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'videos_summary')
+    if not os.path.exists(videos_sum_folder):
+        os.makedirs(videos_sum_folder)
 
-    object_extracted_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/objects_extracted/')
-    if not os.path.exists(videos_folder):os.makedirs(object_extracted_folder)
+    object_extracted_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted')
+    if not os.path.exists(object_extracted_folder):
+        os.makedirs(object_extracted_folder)
 
 
     # 1. Lire le csv
@@ -72,7 +74,7 @@ if __name__ == '__main__':
 
         for index, row in df.loc[df['url_noSubs'] == url].iterrows():
 
-            object_extracted_title_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/objects_extracted/',title)
+            object_extracted_title_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted',title)
             if not os.path.exists(object_extracted_title_folder):os.makedirs(object_extracted_title_folder)
 
             #Get start_time as total seconds
