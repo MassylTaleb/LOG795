@@ -1,8 +1,10 @@
 import numpy as np
 import scipy.spatial
-from auxiliary_functions import calculate_total_distance
-from auxiliary_functions import update_representative_points
-from auxiliary_functions import find_best_improvement_normalized_cost
+
+from .auxiliary_functions import calculate_total_distance
+from .auxiliary_functions import find_best_improvement_normalized_cost
+from .auxiliary_functions import update_representative_points
+
 
 def ILS_SUMM(X, C, budget, ILS_max_trails=1):
     np.random.seed(100)

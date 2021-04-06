@@ -1,18 +1,18 @@
-import numpy as np
 import os
-import sys
-from ILS_SUMM import ILS_SUMM
+
 import matplotlib.pyplot as plt
+import numpy as np
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
-    SUMM_RATIO = 0.1  # The maximum allowed ratio between the summary video and the full video.
-    VIDEO_NAME = 'Cosmos_Laundromat.mp4'
+from .ILS_SUMM import ILS_SUMM
 
+
+def video_summarize(folder_to_save_in, video_path, summ_ratio, title):
     # Load data:
-    X = np.load(os.path.join('data', 'shots_features.npy'))  # Load n x d feature matrix. n -> number of shots, d -> feature dimension.
-    C = np.load(os.path.join('data', 'shots_durations.npy'))  # Load n x 1 shots duration array (number of frames per shot).
+    C = np.load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets', 'gt_auxiliary_scripts', 'final_C.npy'))
+    X = np.load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'pre_processing', 'feature_vector.npy'))
     shot_sum = C.sum()
+    cum_sum = np.cumsum(C[:-1])
 
     # Calculate allowed budget
     budget = float(summ_ratio) * np.sum(C)
@@ -31,13 +31,13 @@ def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
     plt.scatter(u[representative_points, 1], u[representative_points, 2], s=point_size[representative_points],
                 c='blue', marker='o')
     plt.title('Solution Visualization (total distance = ' + str(total_distance) + ')')
-    plt.savefig(os.path.join('data', 'Solution_Visualization'))
+    plt.savefig(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'Solution_Visualization'))
 
     # Generate the video summary file
-    video_file_path = os.path.join('data', video_name)
+    video_file_path = os.path.join(video_path)
     video_clip = VideoFileClip(video_file_path)
     shotIdx = np.concatenate(([0], np.cumsum(C[:-1])))
-    frames_per_seconds = np.sum(C)/ video_clip.duration
+    frames_per_seconds = np.sum(C) / video_clip.duration
     chosen_shots_clips = []
     all_start_time_clips = []
     all_end_time_clips = []
@@ -56,20 +56,33 @@ def demo(video_name='Cosmus_Laundromat.mp4', summ_ratio=0.1):
     keys = range(len(all_start_time_clips))
 
     x = 1
+    real_clip_duration = 0
+    diff_time = 0
     for i in keys:
-        clip_duration = int(all_end_time_clips[i] - all_start_time_clips[i])
+        real_clip_duration = all_end_time_clips[i] - all_start_time_clips[i]
+        clip_duration = int(real_clip_duration)
+        diff_time += real_clip_duration - clip_duration
+        if diff_time >= 1:
+            clip_duration += 1
+            diff_time -= 1
         dict[x] = all_start_time_clips[i]
-        for j in range(clip_duration):
+        for j in range(clip_duration - 1):
             time = j + 1
             dict[x + time] = all_start_time_clips[i] + time
-        x = x + clip_duration + 1
-    if chosen_shots_clips == []:
+        x = x + clip_duration
+    if not chosen_shots_clips:
         print("The length of the shortest shots exceeds the allotted summarization time")
     else:
         summ_clip = concatenate_videoclips(chosen_shots_clips)
+        summ_clip.write_videofile(os.path.join(folder_to_save_in, title))
 
-        summ_clip.write_videofile(os.path.join('data', "video_summary.mp4"))
+    return dict;
+
 
 if __name__ == "__main__":
+<<<<<<< HEAD:ILS-SUMM-master/summarization/video_summarize.py
+    video_summarize('../data/video_to_summarize.mp4')
+=======
     video_path
     demo()
+>>>>>>> main:ILS-SUMM-master/demo.py
