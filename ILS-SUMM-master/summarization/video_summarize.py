@@ -80,9 +80,4 @@ def video_summarize(folder_to_save_in, video_path, summ_ratio, title):
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD:ILS-SUMM-master/summarization/video_summarize.py
     video_summarize('../data/video_to_summarize.mp4')
-=======
-    video_path
-    demo()
->>>>>>> main:ILS-SUMM-master/demo.py
