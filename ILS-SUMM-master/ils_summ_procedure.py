@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
 
     # 1. Lire le csv
-    csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data','csv','with_pretreatment_span_3_pfe - with_pretreatment_span_3_pfe.csv')
+    csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data','csv','with_pretreatment_span_3_pfe.csv')
     df = pd.read_csv(csv_path)
     print(df.head())
 
