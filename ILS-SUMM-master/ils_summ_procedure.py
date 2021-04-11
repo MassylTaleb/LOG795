@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-import os, sys, glob
+import os, sys, glob,math
 import youtube_dl
 import pandas as pd 
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
+import matplotlib.backends.backend_pdf
 from datetime import timedelta
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
@@ -113,6 +115,7 @@ if __name__ == '__main__':
     #             frame_count+=1
 
 
+    print("\n\n------------------ CLUSTERING ---------------------")
     # 5. Clustering
     extracted_objects_path = os.path.join(object_extracted_folder,'*','*.png')
     objects = glob.glob(extracted_objects_path)
@@ -135,7 +138,9 @@ if __name__ == '__main__':
     images_flat = np.array(images_flat)
 
 
-    nb_clusters = 12
+    nb_clusters = 18
+    print("nb_cluster : {}".format(nb_clusters))
+    
     kmeans = KMeans(n_clusters=nb_clusters, n_jobs=-1, random_state=22)
     kmeans.fit(images_flat)
 
@@ -212,6 +217,56 @@ if __name__ == '__main__':
     print(matrice_topic_objet.head(10))
     matrice_topic_objet.to_csv(os.path.join(csv_folder,'topic_cluster.csv'))
     print('\n\n')
+
+
+    # Plotting result
+    # -----------------------------------------------------------------------------------------
+    pdf = matplotlib.backends.backend_pdf.PdfPages('/home/ziz/school/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
+    clusters = np.sort(objects_df.cluster.unique())
+
+    for cluster in clusters:
+        cl = objects_df.loc[objects_df['cluster'] == cluster]
+        qty = len(cl)
+        x = round(math.sqrt(qty)) +1
+        y = x-1
+    #     figsize=(10, 7)
+        fig = plt.figure()
+    #     fig.title("Cluster : {}".format(cluster))
+        fig.add_subplot(x,y,1)
+        fig.suptitle('Cluster : {}'.format(cluster), fontsize=16)
+
+        i = 0
+        for index, row in cl.iterrows():
+            
+            fig.add_subplot(x,y,i+1)
+            
+            img = cv2.imread(row.object_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+            if(row.centroid == 1):
+                img = cv2.imread(row.object_path)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img_witdh = img.shape[1]
+                img_height = img.shape[0] 
+                top_border = round(img_witdh*0.1)
+                left_border = round(img_height*0.1)
+                img = cv2.copyMakeBorder(
+                    img, top_border, top_border, left_border, left_border, 
+                    cv2.BORDER_CONSTANT, 
+                    value=[200,0,0]
+                )
+
+            else:
+                img = cv2.imread(row.object_path)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            plt.axis('off')
+            plt.imshow(img)
+            i+=1
+    
+        pdf.savefig(fig)
+
+    pdf.close()
+        # plt.savefig('/home/ziz/school/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
 
 
     # 5. Pour chaque interval correspondant au titre du csv
