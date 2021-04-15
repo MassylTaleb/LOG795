@@ -235,7 +235,7 @@ if __name__ == '__main__':
 
     # Plotting result
     # -----------------------------------------------------------------------------------------
-    pdf = matplotlib.backends.backend_pdf.PdfPages('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
+    pdf = matplotlib.backends.backend_pdf.PdfPages('D:/ETS/BAC/PFE/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
     clusters = np.sort(objects_df.cluster.unique())
 
     for cluster in clusters:
