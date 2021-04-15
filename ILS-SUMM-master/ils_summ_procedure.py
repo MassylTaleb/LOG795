@@ -14,6 +14,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 from object_extraction.Extractor import Extractor
 import pre_processing
 import summarization
+from yellowbrick.cluster import KElbowVisualizer
 
 
 # if __name__ == '__main__':
@@ -141,8 +142,8 @@ if __name__ == '__main__':
     images_flat = []
     for index, row in objects_df.iterrows():
         img = cv2.imread(row.object_path)
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
         img = cv2.resize(img, (240,240))
         # images.append(img)
@@ -152,7 +153,16 @@ if __name__ == '__main__':
     images_flat = np.array(images_flat)
 
 
-    nb_clusters = 18
+
+
+
+    # Instantiate the clustering model and visualizer
+    model = KMeans(random_state=22)
+    visualizer = KElbowVisualizer(model, k=(1, 20), timings=True)
+
+    visualizer.fit(images_flat)
+    visualizer.show('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/elbow.png')
+    nb_clusters = visualizer.elbow_value_
     print("nb_cluster : {}".format(nb_clusters))
     
     kmeans = KMeans(n_clusters=nb_clusters, n_jobs=-1, random_state=22)
