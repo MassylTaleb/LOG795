@@ -12,7 +12,7 @@ from datetime import timedelta
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from object_extraction.Extractor import Extractor
-from cluster import Estimator
+from Clustering.Estimator import Estimator
 import pre_processing
 import summarization
 from yellowbrick.cluster import KElbowVisualizer
@@ -57,78 +57,78 @@ if __name__ == '__main__':
         os.makedirs(object_extracted_folder)
 
 
-    # 1. Lire le csv
-    documents = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data','csv','with_pretreatment_span_3_pfe.csv')
-    documents_df = pd.read_csv(documents)
-    print(documents_df.head())
+    # # 1. Lire le csv
+    # documents = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data','csv','with_pretreatment_span_3_pfe.csv')
+    # documents_df = pd.read_csv(documents)
+    # print(documents_df.head())
 
-    extractor = Extractor()
+    # extractor = Extractor()
 
-    # 2. Recuperer les liens des video youtube.
-    urls_videos = documents_df.url_noSubs.unique()
+    # # 2. Recuperer les liens des video youtube.
+    # urls_videos = documents_df.url_noSubs.unique()
 
-    # df_frames_objects = pd.DataFrame(colums=['index_word', 'frames','objects'])
+    # # df_frames_objects = pd.DataFrame(colums=['index_word', 'frames','objects'])
 
-    # Clear object extracted folders
-    folder_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted')
-    for filename in os.listdir(folder_name):
-        file_path = os.path.join(folder_name, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    # # Clear object extracted folders
+    # folder_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted')
+    # for filename in os.listdir(folder_name):
+    #     file_path = os.path.join(folder_name, filename)
+    #     try:
+    #         if os.path.isfile(file_path) or os.path.islink(file_path):
+    #             os.unlink(file_path)
+    #         elif os.path.isdir(file_path):
+    #             shutil.rmtree(file_path)
+    #     except Exception as e:
+    #         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    # 3. Recuperer le videos youtube a partir du lien
-    for url in documents_df.url_noSubs.unique():
-        # print(url)
+    # # 3. Recuperer le videos youtube a partir du lien
+    # for url in documents_df.url_noSubs.unique():
+    #     # print(url)
 
-        first_row = documents_df.loc[documents_df['url_noSubs'] == url].iloc[0]
-        title = first_row.title
+    #     first_row = documents_df.loc[documents_df['url_noSubs'] == url].iloc[0]
+    #     title = first_row.title
 
-        video_path = os.path.join(videos_folder,title+'.mp4')
+    #     video_path = os.path.join(videos_folder,title+'.mp4')
 
-        pre_processing.load_video(url, videos_folder, video_path, title)
+    #     pre_processing.load_video(url, videos_folder, video_path, title)
 
-        segmentation = pre_processing.ffprobe_shot_segmentation(videos_folder, title+'.mp4')
-        frames_shot = pre_processing.get_frames_shot(video_path)
+    #     segmentation = pre_processing.ffprobe_shot_segmentation(videos_folder, title+'.mp4')
+    #     frames_shot = pre_processing.get_frames_shot(video_path)
 
-        keySum_valueReal_dict = summarization.video_summarize(videos_sum_folder,video_path, 0.1,title+"_sum.mp4")
-
-
-        # 4. Extraire les objects
-        for index, row in documents_df.loc[documents_df['url_noSubs'] == url].iterrows():
+    #     keySum_valueReal_dict = summarization.video_summarize(videos_sum_folder,video_path, 0.1,title+"_sum.mp4")
 
 
-            object_extracted_title_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted',title)
-            if not os.path.exists(object_extracted_title_folder):os.makedirs(object_extracted_title_folder)
-            #Get start_time as total seconds
-            t_i = pd.to_datetime(row.start_time)
-            start_time = (timedelta(minutes = t_i.hour, seconds=t_i.minute, microseconds=t_i.second/0.00006)).total_seconds()
+    #     # 4. Extraire les objects
+    #     for index, row in documents_df.loc[documents_df['url_noSubs'] == url].iterrows():
 
-            #Get end_time as total seconds
-            t_f = pd.to_datetime(row.end_time)
-            end_time = (timedelta(minutes = t_f.hour, seconds=t_f.minute, microseconds=t_f.second/0.00006)).total_seconds()
 
-            # times_list = extractor.get_times_needed(keySum_valueReal_dict, start_time, end_time)
-            video_sum_path = os.path.join(videos_sum_folder, title+"_sum.mp4")
-            frames = extractor.get_multi_frames(keySum_valueReal_dict, start_time, end_time, video_sum_path)
+    #         object_extracted_title_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'objects_extracted',title)
+    #         if not os.path.exists(object_extracted_title_folder):os.makedirs(object_extracted_title_folder)
+    #         #Get start_time as total seconds
+    #         t_i = pd.to_datetime(row.start_time)
+    #         start_time = (timedelta(minutes = t_i.hour, seconds=t_i.minute, microseconds=t_i.second/0.00006)).total_seconds()
 
-            frame_count = 0
-            for frame in frames:
+    #         #Get end_time as total seconds
+    #         t_f = pd.to_datetime(row.end_time)
+    #         end_time = (timedelta(minutes = t_f.hour, seconds=t_f.minute, microseconds=t_f.second/0.00006)).total_seconds()
 
-                objects = extractor.get_objects_from_image(frame)
+    #         # times_list = extractor.get_times_needed(keySum_valueReal_dict, start_time, end_time)
+    #         video_sum_path = os.path.join(videos_sum_folder, title+"_sum.mp4")
+    #         frames = extractor.get_multi_frames(keySum_valueReal_dict, start_time, end_time, video_sum_path)
 
-                object_count = 0
-                for roi in objects:
-                    object_name = str(index)+'_'+str(frame_count)+'_'+str(object_count)+'.png'
-                    t = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-                    cv2.imwrite(os.path.join(object_extracted_title_folder, object_name), t)
-                    object_count += 1
+    #         frame_count = 0
+    #         for frame in frames:
 
-                frame_count+=1
+    #             objects = extractor.get_objects_from_image(frame)
+
+    #             object_count = 0
+    #             for roi in objects:
+    #                 object_name = str(index)+'_'+str(frame_count)+'_'+str(object_count)+'.png'
+    #                 t = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+    #                 cv2.imwrite(os.path.join(object_extracted_title_folder, object_name), t)
+    #                 object_count += 1
+
+    #             frame_count+=1
 
 
     print("\n\n------------------ CLUSTERING ---------------------")
@@ -159,16 +159,14 @@ if __name__ == '__main__':
 
     # Instantiate the clustering model and visualizer
 
+
+    # Estimate K cluster
     model = KMeans(random_state=22)
+    nb_clusters = Estimator(rapport_folder).estimate(model, k_min =1, k_max =20, values = images_flat, estimator="elbow")
+    # nb_clusters = estimator.elbow(model, k_min =1, k_max =20, values = images_flat)
 
-    nb_clusters =  Estimator().elbow(model, k_min =1, k_max =20, values = images_flat)
-    # visualizer = KElbowVisualizer(model, k=(1, 20), timings=True)
-
-    # visualizer.fit(images_flat)
-    # visualizer.show('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/elbow.png')
-    nb_clusters = visualizer.elbow_value_
-    print("nb_cluster : {}".format(nb_clusters))
     
+    # K-MEANS Clustering
     kmeans = KMeans(n_clusters=nb_clusters, n_jobs=-1, random_state=22)
     kmeans.fit(images_flat)
 
@@ -249,7 +247,7 @@ if __name__ == '__main__':
 
     # Plotting result
     # -----------------------------------------------------------------------------------------
-    pdf = matplotlib.backends.backend_pdf.PdfPages('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
+    pdf = matplotlib.backends.backend_pdf.PdfPages('/home/ziz/school/LOG795/ILS-SUMM-master/data/rapport/test.pdf')
     clusters = np.sort(objects_df.cluster.unique())
 
     for cluster in clusters:
