@@ -12,6 +12,7 @@ from datetime import timedelta
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from object_extraction.Extractor import Extractor
+from cluster import Estimator
 import pre_processing
 import summarization
 from yellowbrick.cluster import KElbowVisualizer
@@ -157,11 +158,14 @@ if __name__ == '__main__':
 
 
     # Instantiate the clustering model and visualizer
-    model = KMeans(random_state=22)
-    visualizer = KElbowVisualizer(model, k=(1, 20), timings=True)
 
-    visualizer.fit(images_flat)
-    visualizer.show('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/elbow.png')
+    model = KMeans(random_state=22)
+
+    nb_clusters =  Estimator().elbow(model, k_min =1, k_max =20, values = images_flat)
+    # visualizer = KElbowVisualizer(model, k=(1, 20), timings=True)
+
+    # visualizer.fit(images_flat)
+    # visualizer.show('C:/Users/massy/Dev/LOG795/ILS-SUMM-master/data/rapport/elbow.png')
     nb_clusters = visualizer.elbow_value_
     print("nb_cluster : {}".format(nb_clusters))
     
