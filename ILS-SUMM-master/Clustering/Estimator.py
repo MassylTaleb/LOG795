@@ -10,9 +10,9 @@ class Estimator:
     def estimate(self, model, k_min:int, k_max:int, values:list, methode="all"):
         
         switcher = {
-            'elbow' : elbow,
-            'silhouette' : silhouette,
-            'dandrogramme' : dandrogramme
+            'elbow' : self.elbow,
+            'silhouette' : self.silhouette,
+            'dandrogramme' : self.dandrogramme
         }
 
         estimator = switcher.get(methode, lambda: 'estimator methode not valid')
@@ -24,7 +24,7 @@ class Estimator:
         
         visualizer = KElbowVisualizer(model, k=(k_min, k_max), timings=True)
         visualizer.fit(values)
-        saving_path = os.path.join(self.rapport_path, "elbow.png")
+        saving_path = os.path.join(self.rapport_path, "Elbow.png")
         visualizer.show(saving_path)
 
         K = visualizer.elbow_value_
